@@ -1,5 +1,6 @@
-/node_modules
-/node_modules/**
-/assets
-/assets/**
-/package.json
+#Node things:
+node_modules/*
+package.json
+
+#Our things:
+assets/*
