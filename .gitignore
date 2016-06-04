@@ -3,4 +3,4 @@ node_modules/*
 package.json
 
 #Our things:
-assets/*
+public/assets/*
