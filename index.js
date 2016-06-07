@@ -6,12 +6,7 @@ var fs = require("fs");
 var express = require("express");
 
 var app = express();
-/*
-app.get("/", function(request, result){
-	result.write("<!DOCTYPE html> <html>Hello...<br>This is line 2</html>");
-	result.end();
-});
-*/
+
 app.use(express.static('./public'));
 
 app.get("/favicon.ico", function(req, res){

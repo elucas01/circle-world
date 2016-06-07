@@ -32,3 +32,31 @@ var WebGL = {
 		return program;
 	}
 };
+
+/*
+var WebGL = {};
+WebGL.shaderFromCode = function(gl, type, code){
+	var shader = gl.createShader(gl[type]);
+	gl.shaderSource(shader, code);
+	gl.compileShader(shader);
+	if(!gl.getShaderParameter(fs,gl.COMPILE_STATUS)) {
+		throw new Error(type + ": " + gl.getShaderInfoLog(fs));
+	}
+	return shader;
+};
+WebGL.programFromShaders = function(gl, vertex, fragment){
+	var program = gl.createProgram(); 
+	gl.attachShader(program, vert); 
+	gl.attachShader(program, frag);
+	gl.linkProgram(program);
+	gl.useProgram(program);
+	if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+		throw new Error("PROGRAM: \n" + gl.getProgramInfoLog(program));
+	}
+	return program;
+};
+WebGL.
+*/
+
+
+
