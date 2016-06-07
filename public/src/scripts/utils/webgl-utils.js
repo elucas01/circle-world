@@ -4,7 +4,7 @@ var WebGL = {
 		var vertex = gl.createShader(gl.VERTEX_SHADER);
 		gl.shaderSource(fragment, fragmentCode);
 		gl.shaderSource(vertex, vertexCode);
-		gl.compileShader(vertex);
+		//gl.compileShader(vertex);
 
 		gl.compileShader(fragment);
 		if(!gl.getShaderParameter(fragment,gl.COMPILE_STATUS)) {
