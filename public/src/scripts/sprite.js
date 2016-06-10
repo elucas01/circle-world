@@ -26,23 +26,23 @@ Sprite.prototype.init = function(gl){
 		return;
 	}
 	
-	var program = gl.createProgram(); 
-	gl.attachShader(program, vertex); 
-	gl.attachShader(program, fragment);
-	gl.linkProgram(program);
-	gl.useProgram(program);
+	this.program = gl.createProgram(); 
+	gl.attachShader(this.program, vertex); 
+	gl.attachShader(this.program, fragment);
+	gl.linkProgram(this.program);
+	gl.useProgram(this.program);
 	
-	if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-		console.log(gl.getProgramInfoLog(program));
+	if(!gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
+		console.log(gl.getProgramInfoLog(this.program));
 		return;
 	}
 	
-	var pos = gl.getAttribLocation(program, "pos");
+	var pos = gl.getAttribLocation(this.program, "pos");
 	
 	
 	
-	var buf = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+	this.buf = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.buf);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0,1,0,0,1,0,1,1,0,1,1]), gl.STATIC_DRAW);
 	
 	
@@ -57,11 +57,11 @@ Sprite.prototype.init = function(gl){
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 	
-	this.matrix = gl.getUniformLocation(program, "texm");
+	this.matrix = gl.getUniformLocation(this.program, "texm");
 	
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.image);
 };
-Sprite.prototype.update = function(gl, canvas){
+Sprite.prototype.updateMatrix = function(gl){
 	var clipX = this.x / gl.canvas.width  *  2 - 1;
 	var clipY = this.y / gl.canvas.height * -2 + 1;
 	var clipWidth = this.width  / gl.canvas.width  *  2;
@@ -77,6 +77,8 @@ Sprite.prototype.texture = function(gl){
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.image);
 };
 Sprite.prototype.draw = function(gl){
+	gl.useProgram(this.program);
+	//gl.bindBuffer(gl.ARRAY_BUFFER, this.buf);
 	gl.drawArrays(gl.TRIANGLES, 0, 6);
 };
 

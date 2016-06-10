@@ -47,9 +47,10 @@ function draw(){
 	var time = Date.now() * 0.001;
 	
 	gl.clearColor(0, 0, 0, 0);
+	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	
-	player.x = Math.cos(time) * 128 + 64;
-	player.y = Math.sin(time) * 128 + 64;
+	player.x = Math.cos(time) * 64 + 64;
+	player.y = Math.sin(time) * 64 + 64;
 	player.update(gl);
 	player.draw(gl);
 	
