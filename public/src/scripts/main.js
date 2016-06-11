@@ -1,66 +1,48 @@
-"use strict";
+var view, renderer;
 
-const attributes = {
-	alpha: false,
-	depth: false,
-	stencil: false,
-	antialias: false,
-	premultipliedAlpha: false,
-	preserveDrawingBuffer: true,
-	failIfMajorPerformanceCaveat: true
+function loop(){
+	renderer.draw();
+	/*
+	renderer.sprites[0].force(0, 10);
+	//renderer.sprites[1].force(-10, 0);
+
+	for (var i = 0; i < renderer.sprites.length; i++){
+		renderer.sprites[i].update();
+		for (var j = i + 1; j < renderer.sprites.length; j++){
+			renderer.sprites[i].collide(renderer.sprites[j]);
+		}
+	}*/
+
+
+	window.requestAnimationFrame(function(){
+		window.setTimeout(loop, 30);
+	});
+}
+
+window.onload = function(){
+	view = new GameView();
+	view.attachToCanvas("game-canvas");
+
+	renderer = view.createSpriteRenderer();
+	renderer.init();
+
+	var texture = view.createTexture();
+
+	Load.image("./assets/textest.png", function(image){
+		texture.load(image);
+		texture.init();
+
+		var player = new Sprite(texture, 64, 64, 64, 64);
+		renderer.add(player);
+
+		var world = new World(32, 2, 2);
+		world.random();
+		world.generateSprites(renderer, texture);
+
+		loop();
+	});
 };
 
-var gl;
-var player;
-
-window.onload = main;
-function main(){
-	var canvas = document.getElementById("game");
-	
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-	
-	gl = canvas.getContext('webgl', attributes) || canvas.getContext('experimental-webgl', attributes);
-	if (!gl){
-		console.log("no gl :(");
-		return;
-	}
-	
-	Load.image("./assets/textest.png", function(image){
-		player = new Sprite(image, 0, 0, 64, 64);
-		player.init(gl);
-		draw();
-	});
-}
-
-window.onresize = resize;
-function resize(){
-	var canvas = document.getElementById("game");
-	
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-	
-	gl.viewport(0, 0, canvas.width, canvas.height);
-}
-
-function draw(){
-	var time = Date.now() * 0.001;
-	
-	gl.clearColor(0, 0, 0, 0);
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-	
-	player.x = Math.cos(time) * 64 + 64;
-	player.y = Math.sin(time) * 64 + 64;
-	player.update(gl);
-	player.draw(gl);
-	
-	window.requestAnimationFrame(function(){
-		window.setTimeout(draw, 15);
-	});
-}
-
-
-
-
-
-
+window.onresize = function(){
+	view.resize();
+};
