@@ -76,6 +76,35 @@ Texture.prototype.bind = function(){
 	this.gl.activeTexture(this.gl.TEXTURE0 + this.unit);
 	this.gl.bindTexture(this.gl.TEXTURE_2D, this.elem);
 };
+Texture.prototype.clear = function(){
+	this.gl.texImage2D(this.gl.TEXTURE_2D,
+										 0,
+										 this.gl.RGBA,
+										 this.width,
+										 this.height,
+										 0,
+										 this.gl.RGBA,
+										 this.gl.UNSIGNED_BYTE,
+										 null);
+}
+Texture.prototype.setAsTarget = function(){
+	//this.gl.bindTexture(this.gl.TEXTURE_2D, this.elem);
+	this.bind();
+	this.clear();
+
+	this.frame = this.gl.createFramebuffer();
+ 	this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.frame);
+ 	this.frame.width = this.width;
+ 	this.frame.height = this.height;
+
+	this.gl.framebufferTexture2D(
+      this.gl.FRAMEBUFFER,
+			this.gl.COLOR_ATTACHMENT0,
+			this.gl.TEXTURE_2D, this.elem, 0);
+
+	this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+	this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+};
 Texture.units = 0;
 
 
@@ -268,6 +297,7 @@ SpriteRenderer.prototype.init = function(){
 	this.sampler = gl.getUniformLocation(program, "u_sampler");
 };
 SpriteRenderer.prototype.add = function(sprite){
+	sprite.texture.clear();
 	this.sprites.push(sprite);
 };
 SpriteRenderer.prototype.setTextureUnit = function(unit){
@@ -316,6 +346,18 @@ Chunk.prototype.get = function(x, y){
 Chunk.prototype.set = function(x, y, value){
 	this.data[x + y * this.width] = value;
 };
+Chunk.prototype.select = function(sprite){
+	var xs = Math.floor(sprite.x / this.scale);
+	var ys = Math.floor(sprite.y / this.scale);
+	var xe = Math.ceil((sprite.x + sprite.width) / this.scale);
+	var ye = Math.ceil((sprite.y + sprite.height) / this.scale);
+
+	for (var x = xs; x < xe; x++){
+		for (var y = ys; x < xe; x++){
+
+		}
+	}
+}
 Chunk.prototype.random = function(){
 	for (var i = 0; i < this.data.length; i++){
 		this.data[i] = Math.floor(Math.random() * 2.0);
