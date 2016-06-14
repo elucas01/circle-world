@@ -32,12 +32,12 @@ void main(){
 function Texture(gl){
 	this.unit = Texture.units++;
 
-	this.data;
-	this.width;
-	this.height;
+	// this.data;
+	// this.width;
+	// this.height;
 
 	this.gl = gl;
-	this.elem;
+	// this.elem;
 }
 Texture.prototype.load = function(source, width, height){
 	if (source instanceof Image)
@@ -86,7 +86,7 @@ Texture.prototype.clear = function(){
 										 this.gl.RGBA,
 										 this.gl.UNSIGNED_BYTE,
 										 null);
-}
+};
 Texture.prototype.setAsTarget = function(){
 	//this.gl.bindTexture(this.gl.TEXTURE_2D, this.elem);
 	this.bind();
@@ -249,10 +249,10 @@ function SpriteRenderer(gl){
 	this.sprites = [];
 
 	this.gl = gl;
-	this.program;
-
-	this.matrix;
-	this.sampler;
+	// this.program;
+	//
+	// this.matrix;
+	// this.sampler;
 }
 SpriteRenderer.prototype.init = function(){
 	var gl = this.gl;
@@ -357,7 +357,7 @@ Chunk.prototype.select = function(sprite){
 
 		}
 	}
-}
+};
 Chunk.prototype.random = function(){
 	for (var i = 0; i < this.data.length; i++){
 		this.data[i] = Math.floor(Math.random() * 2.0);
@@ -366,7 +366,7 @@ Chunk.prototype.random = function(){
 Chunk.prototype.generateSprites = function(renderer, texture){
 	for (var x = 0; x < this.width; x++){
 		for (var y = 0; y < this.height; y++){
-			if (this.get(x, y) != 0){
+			if (this.get(x, y) !== 0){
 				var sprite = new Sprite(texture, this.x + x * this.scale, this.y + y * this.scale, this.scale, this.scale);
 				renderer.add(sprite);
 			}
@@ -408,8 +408,8 @@ World.prototype.generateSprites = function(renderer, texture){
 };
 
 function GameView(){
-	this.canvas;
-	this.gl;
+	// this.canvas;
+	// this.gl;
 
 	this.settings = {};
 }

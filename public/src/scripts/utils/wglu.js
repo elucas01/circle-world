@@ -5,6 +5,7 @@ var GL = window.WebGLRenderingContext ||
          window.WebGL2RenderingContext;
 
 function __WGLU(){
+
   this.create = function(target){
     if (target == GL.ARRAY_BUFFER || target == GL.ELEMENT_ARRAY_BUFFER){
       return this.createBuffer();
@@ -21,7 +22,7 @@ function __WGLU(){
     else if (target == GL.FRAGMENT_SHADER || target == GL.VERTEX_SHADER){
       return this.createShader(target);
     }
-  }
+  };
   this.bind = function(object, target){
     if (object instanceof WebGLTexture){
       if (target){
@@ -83,7 +84,7 @@ function __WGLU(){
         this.framebufferTexture2D(GL.FRAMEBUFFER, type, GL.TEXTURE_2D, data, 0);
       }
     }
-  }
+  };
   this.shaderFromCode = function(code, type){
     var shader = this.createShader(type || GL.FRAGMENT_SHADER);
     this.shaderSource(shader, code);
@@ -120,6 +121,25 @@ function WGLU(canvas){
 
   __WGLU.call(wglu);
 
+  wglu.resize = function(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    wglu.viewport(0, 0, canvas.width, canvas.height);
+  };
+  wglu.fullscreen = function(){
+    if (canvas.requestFullscreen) {
+			canvas.requestFullscreen();
+		}
+		else if (canvas.webkitRequestFullScreen) {
+			canvas.webkitRequestFullScreen();
+		}
+		else if (canvas.mozRequestFullScreen){
+			canvas.mozRequestFullScreen();
+		}
+    //wglu.resize();
+  };
+
+  wglu.resize();
   return wglu;
 }
 

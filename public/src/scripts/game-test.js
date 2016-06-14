@@ -10,7 +10,7 @@ var Game = {
 
 		this.init = function(image, x, y, w, h){
 
-		}
+		};
 	}
 };
 
@@ -61,7 +61,7 @@ GamePhysicsElement.prototype.collideX = function(that){
 	that.vx = (this.mass * (this.vx - that.vx) + m) / (this.mass + that.mass);
 
 	this.x += this.vx * ptime;
-	that.x += that.vx * ptime;;
+	that.x += that.vx * ptime;
 };
 GamePhysicsElement.prototype.collide = function(){
 

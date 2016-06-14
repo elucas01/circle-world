@@ -1,6 +1,6 @@
 var Game = {
 	images: [],
-	
+
 	webgl_attributes: {
 		alpha: false,
 		depth: false,
@@ -10,31 +10,31 @@ var Game = {
 		preserveDrawingBuffer: true,
 		failIfMajorPerformanceCaveat: true
 	},
-	
+
 	init: function(canvas){
 		if (typeof canvas === "string"){
 			canvas = document.getElementById(canvas);
-		} 
+		}
 		this.canvas = canvas;
-		
+
 		this.gl = this.canvas.getContext('webgl', this.webgl_attributes) ||
 				  this.canvas.getContext('experimental-webgl', this.webgl_attributes);
 		if (!this.gl){
 			throw new Error("Could not create WebGL context.");
 		}
-		
+
 		this.canvas.addEventListener("click", function(){
 			if (canvas.requestFullscreen) {
 				canvas.requestFullscreen();
-			} 
+			}
 			if (canvas.webkitRequestFullScreen) {
 				canvas.webkitRequestFullScreen();
-			} 
+			}
 			if (canvas.mozRequestFullScreen){
 				canvas.mozRequestFullScreen();
 			}
 		});
-		
+
 		this.resize();
 	},
 	resize: function(){
@@ -45,27 +45,27 @@ var Game = {
 	draw: function(){
 		this.gl.clearColor(0, 0, 0, 0);
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-		
+
 		this.spriteGroup.draw();
-		
+
 		/*var spr = this.sprites;
 		for (var i = 0; i < spr.length; i++){
 			spr[i].updateMatrix(this.gl);
 			spr[i].draw(this.gl);
 		}
-		
+
 		var i,j;
 		for (i = 0; i < spr.length; i++){
 			for (j = i+1; j < spr.length; j++){
 				spr[i].collideX(spr[j]);
 			}
 		}
-		
+
 		for (i = 0; i < spr.length; i++){
 			spr[i].update();
 		}*/
-		
-		
+
+
 		window.requestAnimationFrame(function(){
 			window.setTimeout(function(){
 				Game.draw();
@@ -76,16 +76,16 @@ var Game = {
 
 window.onload = function(){
 	Game.init("game-canvas");
-	
+
 	Load.image("./assets/textest.png", function(img){
-		var g = new SpriteGroup(Game.gl); 
+		var g = new SpriteGroup(Game.gl);
 		g.sprites.push({x: 0, y: 0, width: 64, height: 64});
 		g.sprites.push({x: 384, y: 0, width: 64, height: 64});
 		g.images.push(img);
 		g.init();
-		
+
 		Game.spriteGroup = g;
-		
+
 		Game.draw();
 	});
 };
@@ -110,7 +110,7 @@ function GamePhysicsElement(image, x, y, width, height){
 	GameElement.call(this, image, x, y, width, height);
 	this.vx = 0;
 	this.vy = 0;
-	
+
 	this.mass = 1;
 }
 GamePhysicsElement.prototype = Object.create(GameElement.prototype);
@@ -124,30 +124,24 @@ GamePhysicsElement.prototype.applyForce = function(fx, fy){
 };
 GamePhysicsElement.prototype.collideX = function(that){
 	if (!this.touch(that)) return;
-	
+
 	var e1 = Math.max(this.x, that.x);
 	var e2 = Math.min(this.x + this.width, that.x + that.width);
-	
+
 	var overlap = Math.abs(e2 - e1);
 	var ptime = overlap / Math.abs(this.vx - this.vy);
-	
+
 	this.x -= this.vx * ptime;
 	that.x -= that.vx * ptime;
-	
+
 	var m = this.mass * this.vx + that.mass * that.vx;
-	
+
 	this.vx = (that.mass * (that.vx - this.vx) + m) / (this.mass + that.mass);
 	that.vx = (this.mass * (this.vx - that.vx) + m) / (this.mass + that.mass);
-	
+
 	this.x += this.vx * ptime;
-	that.x += that.vx * ptime;;
+	that.x += that.vx * ptime;
 };
 GamePhysicsElement.prototype.collide = function(){
-	
+
 };
-
-
-
-
-
-

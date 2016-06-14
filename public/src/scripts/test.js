@@ -1,3 +1,5 @@
+/* jshint esversion: 6 */
+
 var FRAGMENT_SOURCE = `
 #ifdef gl_FRAGMENT_PRECISION_HIGH
 	precision highp float;
@@ -26,10 +28,10 @@ void main(){
 
 
 function Grid(width, height, data){
-  this.vertices;
-  this.indices;
-  this.vbo;
-  this.ibo;
+  // this.vertices;
+  // this.indices;
+  // this.vbo;
+  // this.ibo;
 
   this.width = width;
   this.height = height;
@@ -63,7 +65,7 @@ Grid.prototype.initIndices = function(){
 
   for (x = 0; x < w; x++){
     for (y = 0; y < h; y++){
-      if (true){//d[x + y * w]){
+      if (d[x + y * w]){
         p = x + y * (w + 1);
         // 6 is the number of vertices needed to make a square from two triangles
         i[l++] = p;
@@ -104,7 +106,7 @@ Grid.prototype.bindBuffers = function(gl){
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.ibo);
 };
 Grid.prototype.drawBuffers = function(gl){
-  gl.drawElements(gl.TRIANGLES, this.indices.length - 10, gl.UNSIGNED_SHORT, 0);
+  gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
 };
 
 function beginRenderToTexture(gl){
@@ -184,6 +186,12 @@ window.onload = function(){
   var chunks = [];
 
   var gl = WGLU("game-canvas");
+	window.onresize = function(){
+		gl.resize();
+	};
+	window.onclick = function(){
+		gl.fullscreen();
+	};
 
   var program = gl.programFromScripts([{
     code: VERTEX_SOURCE,
@@ -197,11 +205,11 @@ window.onload = function(){
 
 
 
-  var grid = new Grid(5, 5, [1, 1, 1, 1, 1,
-                             1, 0, 0, 1, 1,
-                             1, 1, 1, 1, 1,
+  var grid = new Grid(5, 5, [1, 0, 0, 1, 1,
+                             1, 0, 1, 0, 1,
                              1, 1, 0, 1, 1,
-                             1, 1, 1, 1, 1]);
+                             1, 0, 1, 0, 1,
+                             1, 1, 0, 0, 1]);
   grid.initVertices();
   grid.initIndices();
   grid.createBuffers(gl, program);

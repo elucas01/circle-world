@@ -1,6 +1,11 @@
-#Node things:
+#Node:
 node_modules/*
 package.json
 
-#Our things:
+#Assets:
 public/assets/*
+public/favicon.ico
+
+#Build Tools:
+.jshintrc
+gulpfile.js

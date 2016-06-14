@@ -6,15 +6,15 @@ var Load = {
 			if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200){
 				callback(xhr.responseText);
 			}
-		}
+		};
 		xhr.send();
 	},
-	
+
 	image: function(url, callback){
 		var img = new Image();
 		img.onload = function(){
 			callback(img);
-		}
+		};
 		img.src = url;
 	}
 };
