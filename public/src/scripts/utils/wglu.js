@@ -91,6 +91,7 @@ function __WGLU(){
     this.compileShader(shader);
 
     if(!this.getShaderParameter(shader, GL.COMPILE_STATUS)) {
+      console.log(code);
   		throw new Error(this.getShaderInfoLog(shader));
   	}
     return shader;

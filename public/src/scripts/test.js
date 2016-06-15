@@ -1,60 +1,11 @@
-if (false){
-	var FRAGMENT_SOURCE = `
-	#ifdef gl_FRAGMENT_PRECISION_HIGH
-		precision highp float;
-	#else
-		precision mediump float;
-	#endif
+const CHUNK_SHADER_FRAG = `/* @include glsl/chunk-shader.frag */`;
+const CHUNK_SHADER_VERT = `/* @include glsl/chunk-shader.vert */`;
 
-	uniform sampler2D u_sampler;
+const BLOCK_SHADER_FRAG = `/* @include glsl/block-shader.frag */`;
+const BLOCK_SHADER_VERT = `/* @include glsl/block-shader.vert */`;
 
-	varying vec2 v_textureCoord;
+const TERRAIN_TEST_FRAG = `/* @include glsl/terrain-test.frag */`;
 
-	void main() {
-	   gl_FragColor = vec4(1, 0.5, 0, 1);//texture2D(u_sampler, v_textureCoord);
-	}
-	`;
-
-	var VERTEX_SOURCE = `
-	attribute vec2 a_position;
-	varying vec2 v_textureCoord;
-
-	void main(){
-		gl_Position = vec4(a_position, 1, 1);
-	  v_textureCoord = a_position;
-	}
-	`;
-}
-else {
-	var FRAGMENT_SOURCE = `
-	#ifdef gl_FRAGMENT_PRECISION_HIGH
-		precision highp float;
-	#else
-		precision mediump float;
-	#endif
-
-	uniform sampler2D u_sampler;
-
-	varying vec2 v_textureCoord;
-
-	void main() {
-	   gl_FragColor = texture2D(u_sampler, v_textureCoord);
-	}
-	`;
-
-	var VERTEX_SOURCE = `
-	attribute vec2 a_position;
-	varying vec2 v_textureCoord;
-	uniform mat3 u_texMatrix;
-
-	void main(){
-		gl_Position = vec4(vec3(a_position, 1.0) * u_texMatrix, 1.0);
-	  v_textureCoord = a_position;
-	}
-	`;
-}
-
-console.log(`/* @include glsl/texture-shader.frag */`);
 
 function Grid(width, height, data){
   // this.vertices;
@@ -123,10 +74,6 @@ Grid.prototype.createBuffers = function(gl, program){
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
 
-  // console.log(Math.max.apply(null, this.indices), this.vertices.length * 0.5);
-  // console.log(this.indices);
-  // console.log(this.vertices);
-
   this.vbo = vbo;
   this.ibo = ibo;
 };
@@ -154,6 +101,7 @@ Chunk.prototype.prepare = function(gl){
 function ChunkRenderer(gl){
 	this.gl = gl;
 	this.chunks = [];
+  // this.ps;
 
 	// this.vbo;
 	// this.program;
@@ -161,6 +109,23 @@ function ChunkRenderer(gl){
 }
 ChunkRenderer.prototype.add = function(chunk){
 	this.chunks.push(chunk);
+};
+ChunkRenderer.prototype.createPixelShader = function(program){
+  this.ps = new PixelShader(this.gl);
+  this.ps.createBuffer();
+  this.ps.createProgram(program);
+};
+ChunkRenderer.prototype.createChunk = function(x, y, width, height){
+  this.ps.useProgram();
+  this.ps.bindBuffer();
+  var loc = this.gl.getUniformLocation(this.ps.program, "u_samplePos");
+  this.gl.uniform2f(loc, x, y);
+
+  var texture = beginRenderToTexture(this.gl, width * 0.25, height * 0.25);
+  this.ps.drawBuffer();
+  endRenderToTexture(this.gl);
+
+  this.add(new Chunk(x, y, width, height, texture));
 };
 ChunkRenderer.prototype.createBuffer = function(){
 	var vbo = this.gl.createBuffer();
@@ -174,10 +139,10 @@ ChunkRenderer.prototype.createBuffer = function(){
 	);
 
 	this.program = this.gl.programFromScripts([{
-    code: VERTEX_SOURCE,
+    code: CHUNK_SHADER_VERT,
     type: this.gl.VERTEX_SHADER
   }, {
-    code: FRAGMENT_SOURCE,
+    code: CHUNK_SHADER_FRAG,
     type: this.gl.FRAGMENT_SHADER
   }]);
 
@@ -228,15 +193,30 @@ ChunkRenderer.prototype.drawChunks = function(){
 		this.drawBuffer();
 	}
 };
+ChunkRenderer.prototype.useProgram = function(){
+  this.gl.useProgram(this.program);
+};
 
-function beginRenderToTexture(gl){
-  var tex = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-
+function beginRenderToTexture(gl, width, height){
+  //gl.viewport(0, 0, width, height);
   var fbo = gl.createFramebuffer();//(gl.FRAMEBUFFER);
   gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+  fbo.width = width;
+  fbo.height = height;
+
+  var tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+
+
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
   gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+
+  gl.bindTexture(gl.TEXTURE_2D, null);
 
   return tex;
 }
@@ -244,8 +224,8 @@ function endRenderToTexture(gl){
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 }
 
-/*
-window.onload = function(){
+///*
+window._onload = function(){
   var chunks = [];
 
   var gl = WGLU("game-canvas");
@@ -255,10 +235,10 @@ window.onload = function(){
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([1,  1, -1,  1, -1, -1, 1,  1, -1, -1, 1, -1]), gl.STATIC_DRAW);
 
   var program = gl.programFromScripts([{
-    code: VERTEX_SOURCE,
+    code: BLOCK_SHADER_VERT,
     type: gl.VERTEX_SHADER
   }, {
-    code: FRAGMENT_SOURCE,
+    code: CHUNK_SHADER_FRAG,
     type: gl.FRAGMENT_SHADER
   }]);
 
@@ -282,11 +262,16 @@ window.onload = function(){
   //var fbo = gl.createFramebuffer();//(gl.FRAMEBUFFER);
   //gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
   //gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-  var tex = beginRenderToTexture(gl);
+  var tex = beginRenderToTexture(gl, 16, 16);
 
   // Render to the texture (using clear because it's simple)
-  gl.clearColor(0, 1, 0, 1); // green;
-  gl.clear(gl.COLOR_BUFFER_BIT);
+  //gl.clearColor(0, 1, 0, 1); // green;
+  //gl.clear(gl.COLOR_BUFFER_BIT);
+
+  var ps = new PixelShader(gl);
+  ps.createBuffer();
+  ps.createProgram(TERRAIN_TEST_FRAG);
+  ps.drawBuffer();
 
   // Now draw with the texture to the canvas
   // NOTE: We clear the canvas to red so we'll know
@@ -294,13 +279,20 @@ window.onload = function(){
   // from above.
   //gl.unbind(gl.FRAMEBUFFER);
   endRenderToTexture(gl);
+  //gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+  gl.useProgram(program);
+
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
 
   gl.clearColor(1, 0, 0, 1); // red
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-}
-*/
+};
+//*/
+
 
 window._onload = function(){
   var chunks = [];
@@ -314,10 +306,10 @@ window._onload = function(){
 	};
 
   var program = gl.programFromScripts([{
-    code: VERTEX_SOURCE,
+    code: BLOCK_SHADER_VERT,
     type: gl.VERTEX_SHADER
   }, {
-    code: FRAGMENT_SOURCE,
+    code: BLOCK_SHADER_FRAG,
     type: gl.FRAGMENT_SHADER
   }]);
 
@@ -340,56 +332,43 @@ window._onload = function(){
 
 
 window.onload = function(){
-	Load.image("./assets/textest.png", function(image){
-
-		var gl = WGLU("game-canvas");
-		window.onresize = function(){
-			gl.resize();
-		};
-		window.onclick = function(){
-			gl.fullscreen();
-		};
-
-		/*var texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_2D, texture);
-
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);*/
-
-		var texture = gl.createTexture();
-		gl.bindTexture(gl.TEXTURE_2D, texture);
-
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-		var data = new Uint8Array(8*8*4);
-		var solid = new Uint8Array(8*8*4);
-
-		var v;
-		for (var i = 0; i < 8*8*4; i++){
-			v = Math.random()*256 | 0;
-			data[i] = v;
-			solid[i] =
-		}
-
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 8, 8, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+	var gl = WGLU("game-canvas");
+	window.onresize = function(){
+		gl.resize();
+	};
+	window.onclick = function(){
+		gl.fullscreen();
+	};
+  /*
+  var ps = new PixelShader(gl);
+  ps.createBuffer();
+  ps.createProgram(TERRAIN_TEST_FRAG);
+  var loc = gl.getUniformLocation(ps.program, "u_samplePos");
+  gl.uniform2f(loc, 0, 0);
 
 
-		var cr = new ChunkRenderer(gl);
-		cr.createBuffer();
-		cr.add(new Chunk(0, 0, 128, 128, texture));
-		cr.add(new Chunk(128, 128, 128, 128, texture));
+  var texture = beginRenderToTexture(gl, 256, 128);
+  ps.drawBuffer();
+  endRenderToTexture(gl);
+  */
 
-		function draw(){
-			cr.drawChunks();
-			window.requestAnimationFrame(draw);
-		}
-		draw();
-	});
+	var cr = new ChunkRenderer(gl);
+
+  cr.createPixelShader(TERRAIN_TEST_FRAG);
+  cr.createChunk(0, 0, 256, 256);
+  cr.createChunk(0, 256, 256, 256);
+  cr.createChunk(256, 256, 256, 256);
+
+	//cr.add(new Chunk(0, 0, 1024, 512, texture));
+	//cr.add(new Chunk(128, 128, 128, 128, texture));
+
+  cr.createBuffer();
+  cr.useProgram();
+  cr.bindBuffer();
+	function draw(){
+
+		cr.drawChunks();
+		window.requestAnimationFrame(draw);
+	}
+	draw();
 };
