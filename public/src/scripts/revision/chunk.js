@@ -1,10 +1,10 @@
-//BAD
 
-(function(){
 
-const CHUNK_SHADER_FRAG = `/* @include ../glsl/chunk-shader.frag */`;
-const CHUNK_SHADER_VERT = `/* @include ../glsl/chunk-shader.vert */`;
+//(function(){
 
+//const CHUNK_SHADER_FRAG = `/* @include ../glsl/chunk-shader.frag */`;
+//const CHUNK_SHADER_VERT = `/* @include ../glsl/chunk-shader.vert */`;
+/*
 
 function Chunk(x, y, width, height, texture){
 	this.x = x;
@@ -119,3 +119,4 @@ ChunkRenderer.prototype.useProgram = function(){
 };
 
 });
+*/

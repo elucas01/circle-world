@@ -1,7 +1,7 @@
 (function(){
 
-if (!GL) return;
-if (!WGLU) return;
+var SPRITE_SHADER_VERT;
+var SPRITE_SHADER_FRAG;
 
 //Will be a generalized version of ChunkRenderer, that also renders sprites.
 //Chunks and sprites will be in charge of textures and uniforms.
@@ -29,11 +29,11 @@ Camera.prototype.createBuffer = function(){
 Camera.prototype.createProgram = function(){
   this.program = WGLU.programFromScripts(
     [{
-      code: ,
+      code: SPRITE_SHADER_FRAG,
       type: GL.FRAGMENT_SHADER
     },
     {
-      code: STATIC_VERTEX_SHADER,
+      code: SPRITE_SHADER_VERT,
       type: GL.VERTEX_SHADER
     }]
   );
@@ -70,7 +70,9 @@ Camera.prototype.draw = function(){
 
 window.Camera = Camera;
 
-const SPRITE_SHADER_VERT = "/* @include glsl/sprite-shader.vert */";
-const SPRITE_SHADER_FRAG = "/* @include glsl/sprite-shader.frag */";
+SPRITE_SHADER_VERT = `
+/* @include glsl/sprite-shader.vert */`;
+SPRITE_SHADER_FRAG = `
+/* @include glsl/sprite-shader.frag */`;
 
-});
+})();

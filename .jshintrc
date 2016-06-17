@@ -1,0 +1,25 @@
+{
+  "globals": {
+    "GL": true,
+    "WGLU": true,
+    "GLCanvas": true,
+
+    "AABB": true,
+    "Camera": true,
+    "Chunk": true,
+    "PixelShader": true,
+    "Sprite": true
+  },
+
+  "undef": true,
+  "unused": true,
+  "latedef": "nofunc",
+
+  "esversion": 6,
+
+  "eqeqeq": false,
+  "supernew": true,
+
+  "browser": true,
+  "devel": true
+}

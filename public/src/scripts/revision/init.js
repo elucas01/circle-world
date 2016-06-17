@@ -1,12 +1,20 @@
 (function(){
 
-if (!WGLU) return;
+var TERRAIN_SHADER_FRAG;
+
+var camera;
+var pixelshader;
+var sprite;
 
 WGLU.start(function(){
-  WGLU.fullscreen();
+  WGLU.initialize("game-canvas");
 
-  //initialization code
+  Load.image("./assets/textest.png", function(img){
+    camera = new Camera(0, 0, window.innerWidth, window.innerHeight);
+    pixelshader = new PixelShader(TERRAIN_SHADER_FRAG);
 
+    sprite = new Sprite(img, 0, 0, 64, 64);
+  });
 });
 
 WGLU.loop(function(){
@@ -17,6 +25,15 @@ WGLU.loop(function(){
   //physics code
 });
 
-const TERRAIN_SHADER_FRAG = "/* @include glsl/terrain-shader.frag */"
+WGLU.resize(function(){
+  camera.copySize(GLCanvas);
+});
+
+window.onclick = function(){
+  WGLU.fullscreen();
+};
+
+TERRAIN_SHADER_FRAG = `
+/* @include glsl/terrain-shader.frag */`;
 
 })();

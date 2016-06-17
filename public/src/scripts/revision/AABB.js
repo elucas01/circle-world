@@ -7,7 +7,22 @@ function AABB(x, y, width, height){
 
   this.width = width;
   this.height = height;
+}
+AABB.prototype.copy = function(that){
+  this.x = that.x;
+  this.y = that.y;
+  this.width = that.width;
+  this.height = that.height;
 };
+AABB.prototype.copySize = function(that){
+  this.width = that.width;
+  this.height = that.height;
+};
+AABB.prototype.copyPosition = function(that){
+  this.x = that.x;
+  this.y = that.y;
+};
+
 AABB.prototype.overlaps = function(that){
     var dx = this.x - that.x,
         dy = this.y - that.y;
@@ -22,23 +37,30 @@ AABB.prototype.lerp = function(that, factor){
   var cy = this.y + this.height * 0.5;
   var gcy = that.y + that.height * 0.5;
 
-  cx = gcx + (cx - gcx) * scale;
-  cy = gcy + (cy - gcy) * scale;
+  cx = gcx + (cx - gcx) * factor;
+  cy = gcy + (cy - gcy) * factor;
 
-  this.width = that.width + (this.width - that.width) * scale;
-  this.height = that.height + (this.height - that.height) * scale;
+  this.width = that.width + (this.width - that.width) * factor;
+  this.height = that.height + (this.height - that.height) * factor;
 
   this.x = cx - this.width * 0.5;
   this.y = cy - this.height * 0.5;
 };
-AABB.prototype.matrix = function(width, height){
+AABB.prototype.matrixScaled = function(width, height){
 	return [
 		this.width / width * 2, 0, this.x / width * 2 - 1,
 		0, - this.height / height * 2, - this.y / height * 2 + 1,
 		0, 0, 1,
 	];
-}
+};
+AABB.prototype.matrix = function(){
+	return [
+		this.width * 2, 0, this.x * 2 - 1,
+		0, - this.height * 2, - this.y * 2 + 1,
+		0, 0, 1,
+	];
+};
 
 window.AABB = AABB;
 
-})
+})();

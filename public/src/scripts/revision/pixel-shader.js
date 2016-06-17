@@ -1,9 +1,9 @@
 (function(){
 
-if (!GL) return;
-if (!WGLU) return;
+var PIXEL_SHADER_VERT;
 
-function PixelShader(){
+function PixelShader(code){
+  this.code = code;
   // this.vbo;
   // this.program;
 }
@@ -19,10 +19,10 @@ PixelShader.prototype.createBuffer = function(){
     GL.STATIC_DRAW
   );
 };
-PixelShader.prototype.createProgram = function(fragment){
+PixelShader.prototype.createProgram = function(){
   this.program = WGLU.programFromScripts(
     [{
-      code: fragment,
+      code: this.code,
       type: GL.FRAGMENT_SHADER
     },
     {
@@ -50,6 +50,9 @@ PixelShader.prototype.unifomLocation = function(name){
   return GL.getUniformLocation(this.program, name);
 };
 
-const PIXEL_SHADER_VERT = `/* @include glsl/pixel-shader.vert */`;
+window.PixelShader = PixelShader;
+
+PIXEL_SHADER_VERT = `
+/* @include glsl/pixel-shader.vert */`;
 
 })();

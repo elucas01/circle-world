@@ -1,8 +1,5 @@
 (function(){
 
-if (!GL) return;
-if (!WGLU) return;
-
 function Chunk(x, y, width, height){
 	Sprite.call(this, null, x, y, width, height);
 }
@@ -16,8 +13,8 @@ Chunk.prototype.init = function(pixelshader){
 
 	this.fbo = GL.createFramebuffer();
   GL.bindFramebuffer(GL.FRAMEBUFFER, this.fbo);
-  fbo.width = this.width * 0.25;
-  fbo.height = this.height * 0.25;
+  this.fbo.width = this.width * 0.25;
+  this.fbo.height = this.height * 0.25;
 
 	this.texture = GL.createTexture();
 	GL.bindTexture(GL.TEXTURE_2D, this.texture);
@@ -34,7 +31,6 @@ Chunk.prototype.init = function(pixelshader){
   GL.bindFramebuffer(GL.FRAMEBUFFER, null);
 };
 
-
 window.Chunk = Chunk;
 
-});
+})();

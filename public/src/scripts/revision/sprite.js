@@ -1,8 +1,5 @@
 (function(){
 
-if (!GL) return;
-if (!WGLU) return;
-
 function Sprite(image, x, y, width, height){
   AABB.call(this, x, y, width, height);
 
@@ -27,6 +24,6 @@ Sprite.prototype.uniforms = function(camera){
   GL.bindTexture(GL.TEXTURE_2D, this.texture);
 };
 
+window.Sprite = Sprite;
 
-
-})
+})();

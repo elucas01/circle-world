@@ -5,16 +5,26 @@ var GLCanvas;
 (function(){
 
 var WGLU = {
-  processes: [],
+  processes: {
+    startup: [],
+    resize: []
+  },
 
   start: function(func){
-    WGLU.initialize();
-    window.onload = function(){
+    WGLU.processes.startup.push(function(){
       func();
-      
-      for (var i = 0; i < WGLU.processes.length; i++){
-        WGLU.processes[i]();
+    });
+
+    window.onload = function(){
+      for (var i = 0; i < WGLU.processes.startup.length; i++){
+        WGLU.processes.startup[i]();
       }
+
+      window.onresize = function(){
+        for (var i = 0; i < WGLU.processes.resize.length; i++){
+          WGLU.processes.resize[i]();
+        }
+      };
     };
   },
   loop: function(func, time){
@@ -28,14 +38,19 @@ var WGLU = {
       }, time);
     }
 
-    WGLU.processes.push(frame);
+    WGLU.processes.startup.push(frame);
+  },
+  resize: function(func){
+    WGLU.processes.resize.push(function(){
+      func();
+    });
   },
 
   initialize: function(canvas){
     if (typeof canvas == 'string')
       GLCanvas = document.getElementById(canvas);
     else
-      GLCanvas = canvas
+      GLCanvas = canvas;
 
     GL = GLCanvas.getContext('webgl') || GLCanvas.getContext('experimental-webgl');
 
@@ -52,7 +67,7 @@ var WGLU = {
   		throw new Error(GL.getShaderInfoLog(shader));
   	}
     return shader;
-  };
+  },
   programFromScripts: function(scripts){
     var program = GL.createProgram();
     for (var i = 0; i < scripts.length; i++){
@@ -65,7 +80,7 @@ var WGLU = {
   		throw new Error(GL.getProgramInfoLog(program));
   	}
     return program;
-  };
+  },
 
   fillWindow: function(){
     GLCanvas.width = window.innerWidth;
@@ -83,9 +98,9 @@ var WGLU = {
 			GLCanvas.mozRequestFullScreen();
 		}
 
-    window.onresize = function(){
+    WGLU.resize(function(){
       WGLU.fillWindow();
-    };
+    });
   }
 };
 
