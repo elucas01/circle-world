@@ -366,7 +366,7 @@ window.onload = function(){
   cr.useProgram();
   cr.bindBuffer();
 	function draw(){
-
+    gl.viewport(Math.sin(Date.now() / 1000.0), 0, gl.canvas.width, gl.canvas.height);
 		cr.drawChunks();
 		window.requestAnimationFrame(draw);
 	}
