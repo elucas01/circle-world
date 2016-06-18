@@ -2,7 +2,7 @@ var Load = {
 	text: function(url, callback){
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", url);
-		xhr.onreadystatechange = function(data){
+		xhr.onreadystatechange = function(){
 			if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200){
 				callback(xhr.responseText);
 			}

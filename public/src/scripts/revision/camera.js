@@ -13,8 +13,6 @@ function Camera(x, y, width, height){
 }
 Camera.prototype = Object.create(AABB.prototype);
 Camera.prototype.createBuffer = function(){
-  GL.activerTexture(GL.TEXTURE0);
-
   this.vbo = GL.createBuffer();
   GL.bindBuffer(GL.ARRAY_BUFFER, this.vbo);
 

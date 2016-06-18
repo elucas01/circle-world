@@ -37,6 +37,10 @@ PixelShader.prototype.createProgram = function(){
   GL.enableVertexAttribArray(a_position);
   GL.vertexAttribPointer(a_position, 2, GL.FLOAT, false, 0, 0);
 };
+PixelShader.prototype.init = function () {
+  this.createBuffer();
+  this.createProgram();
+};
 PixelShader.prototype.useProgram = function(){
   GL.useProgram(this.program);
 };

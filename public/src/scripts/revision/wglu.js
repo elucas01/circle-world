@@ -6,26 +6,15 @@ var GLCanvas;
 
 var WGLU = {
   processes: {
-    startup: [],
+    setup: [],
+    loops: [],
     resize: []
   },
 
-  start: function(func){
-    WGLU.processes.startup.push(function(){
+  setup: function(func){
+    WGLU.processes.setup.push(function(){
       func();
     });
-
-    window.onload = function(){
-      for (var i = 0; i < WGLU.processes.startup.length; i++){
-        WGLU.processes.startup[i]();
-      }
-
-      window.onresize = function(){
-        for (var i = 0; i < WGLU.processes.resize.length; i++){
-          WGLU.processes.resize[i]();
-        }
-      };
-    };
   },
   loop: function(func, time){
     time = time || 10;
@@ -38,12 +27,30 @@ var WGLU = {
       }, time);
     }
 
-    WGLU.processes.startup.push(frame);
+    WGLU.processes.loops.push(frame);
   },
   resize: function(func){
     WGLU.processes.resize.push(function(){
       func();
     });
+  },
+
+  begin: function(){
+    for (var i = 0; i < WGLU.processes.setup.length; i++){
+      WGLU.processes.setup[i]();
+    }
+
+    window.setTimeout(function(){
+      for (var i = 0; i < WGLU.processes.loops.length; i++){
+        WGLU.processes.loops[i]();
+      }
+    }, 1000);
+
+    window.onresize = function(){
+      for (var i = 0; i < WGLU.processes.resize.length; i++){
+        WGLU.processes.resize[i]();
+      }
+    };
   },
 
   initialize: function(canvas){
@@ -97,10 +104,6 @@ var WGLU = {
 		else if (GLCanvas.mozRequestFullScreen){
 			GLCanvas.mozRequestFullScreen();
 		}
-
-    WGLU.resize(function(){
-      WGLU.fillWindow();
-    });
   }
 };
 
