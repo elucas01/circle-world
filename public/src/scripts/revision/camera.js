@@ -3,9 +3,8 @@
 var SPRITE_SHADER_VERT;
 var SPRITE_SHADER_FRAG;
 
-//Will be a generalized version of ChunkRenderer, that also renders sprites.
-//Chunks and sprites will be in charge of textures and uniforms.
-//The Camera class will just draw the objects in the right positions.
+//A rendering class that is in charge of drawing sprites
+
 function Camera(x, y, width, height){
   AABB.call(this, x, y, width, height);
 
@@ -20,6 +19,7 @@ Camera.prototype.createBuffer = function(){
     GL.ARRAY_BUFFER,
     new Float32Array([
       -1,-1, 1,-1, -1,1, 1,-1, -1,1, 1,1
+      //0,0, 1,0, 0,1, 1,0, 0,1, 1,1
     ]),
     GL.STATIC_DRAW
   );

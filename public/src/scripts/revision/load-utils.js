@@ -1,3 +1,5 @@
+(function(){
+
 var Load = {
 	text: function(url, callback){
 		var xhr = new XMLHttpRequest();
@@ -18,3 +20,7 @@ var Load = {
 		img.src = url;
 	}
 };
+
+window.Load = Load;
+
+})();

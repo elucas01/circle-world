@@ -3,6 +3,9 @@
     "GL": true,
     "WGLU": true,
     "GLCanvas": true,
+    "WorldView": true,
+
+    "Load": true,
 
     "AABB": true,
     "Camera": true,

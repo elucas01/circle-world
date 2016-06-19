@@ -50,7 +50,7 @@ PixelShader.prototype.bindBuffer = function(){
 PixelShader.prototype.drawBuffer = function(){
   GL.drawArrays(GL.TRIANGLES, 0, 6);
 };
-PixelShader.prototype.unifomLocation = function(name){
+PixelShader.prototype.uniformLocation = function(name){
   return GL.getUniformLocation(this.program, name);
 };
 

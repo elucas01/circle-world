@@ -19,9 +19,12 @@ Sprite.prototype.init = function(){
 };
 Sprite.prototype.uniforms = function(camera){
   GL.uniformMatrix3fv(camera.u_matrix, false, this.matrixScaled(camera.width, camera.height));
-
+  
   GL.activeTexture(GL.TEXTURE0);
   GL.bindTexture(GL.TEXTURE_2D, this.texture);
+};
+Sprite.prototype.delete = function(){
+  GL.deleteTexture(this.texture);
 };
 
 window.Sprite = Sprite;

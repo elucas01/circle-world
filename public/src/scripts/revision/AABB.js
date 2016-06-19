@@ -31,6 +31,7 @@ AABB.prototype.overlaps = function(that){
            dx > - this.width &&
            dx < that.width;
 };
+
 AABB.prototype.lerp = function(that, factor){
   var cx = this.x + this.width * 0.5;
   var gcx = that.x + that.width * 0.5;
@@ -48,11 +49,19 @@ AABB.prototype.lerp = function(that, factor){
 };
 AABB.prototype.matrixScaled = function(width, height){
 	return [
-		this.width / width * 2, 0, this.x / width * 2 - 1,
-		0, - this.height / height * 2, - this.y / height * 2 + 1,
+		this.width / width, 0, this.width / width - 1 + this.x / width * 2,
+		0, - this.height / height, -this.height/height + 1 - this.y / height * 2,
 		0, 0, 1,
 	];
-};
+};/*
+AABB.prototype.matrixScaled = function(width, height){
+  console.log(this.x / width, this.y / height);
+	return [
+		this.width / width, 0, this.x / width,
+		0, - this.height / height, - this.y / height,
+		0, 0, 1,
+	];
+};*/
 AABB.prototype.matrix = function(){
 	return [
 		this.width * 2, 0, this.x * 2 - 1,
