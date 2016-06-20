@@ -32,13 +32,13 @@ WGLU.setup(function(){
   //});
   pixelshader = new PixelShader(TERRAIN_SHADER_FRAG);
   pixelshader.init();
-  worldview = new WorldView(0, 0, 0, 0, pixelshader, 512, 512);
-  worldview.copySize(GLCanvas);
+  worldview = new WorldView(0, 0, GLCanvas.width, GLCanvas.height, pixelshader, 512, 512);
   worldview.init();
 });
 
 WGLU.loop(function(){
   //render code
+  worldview.move(-1, 0);
   worldview.draw();
 });
 

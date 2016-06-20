@@ -18,8 +18,8 @@ Sprite.prototype.init = function(){
 	GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, this.image);
 };
 Sprite.prototype.uniforms = function(camera){
-  GL.uniformMatrix3fv(camera.u_matrix, false, this.matrixScaled(camera.width, camera.height));
-  
+  GL.uniformMatrix3fv(camera.u_matrix, false, this.matrixCamera(camera));
+
   GL.activeTexture(GL.TEXTURE0);
   GL.bindTexture(GL.TEXTURE_2D, this.texture);
 };

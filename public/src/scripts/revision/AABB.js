@@ -23,13 +23,24 @@ AABB.prototype.copyPosition = function(that){
   this.y = that.y;
 };
 
-AABB.prototype.overlaps = function(that){
+AABB.prototype.move = function(x, y){
+  this.x += x;
+  this.y += y;
+};
+
+/*AABB.prototype.overlaps = function(that){
     var dx = this.x - that.x,
         dy = this.y - that.y;
     return dy > - this.height &&
            dy < that.height &&
            dx > - this.width &&
            dx < that.width;
+};*/
+AABB.prototype.overlaps = function(that){
+  return (this.y + this.height > that.y) &&
+         (this.y < that.y + that.height) &&
+         (this.x + this.width > that.x) &&
+         (this.x < that.x + that.width);
 };
 
 AABB.prototype.lerp = function(that, factor){
@@ -51,6 +62,13 @@ AABB.prototype.matrixScaled = function(width, height){
 	return [
 		this.width / width, 0, this.width / width - 1 + this.x / width * 2,
 		0, - this.height / height, -this.height/height + 1 - this.y / height * 2,
+		0, 0, 1,
+	];
+};
+AABB.prototype.matrixCamera = function(camera){
+	return [
+		this.width / camera.width, 0, this.width / camera.width - 1 + (this.x - camera.x) / camera.width * 2,
+		0, - this.height / camera.height, -this.height / camera.height + 1 - (this.y - camera.y) / camera.height * 2,
 		0, 0, 1,
 	];
 };/*
