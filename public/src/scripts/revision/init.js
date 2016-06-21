@@ -7,6 +7,7 @@ var pixelshader;
 //var sprite;
 //var chunk;
 var worldview;
+var controller;
 
 WGLU.setup(function(){
   WGLU.initialize("game-canvas");
@@ -34,11 +35,19 @@ WGLU.setup(function(){
   pixelshader.init();
   worldview = new WorldView(0, 0, GLCanvas.width, GLCanvas.height, pixelshader, 512, 512);
   worldview.init();
+
+  controller = new Controller();
+  controller.addKey(38, 0, -1);
+  controller.addKey(40, 0, 1);
+  controller.addKey(37, -1, 0);
+  controller.addKey(39, 1, 0);
+
 });
 
 WGLU.loop(function(){
   //render code
-  worldview.move(-1, 0);
+  var dir = controller.direction();
+  worldview.move(dir.x * 6.0, dir.y * 6.0);
   worldview.draw();
 });
 

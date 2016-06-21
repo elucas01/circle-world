@@ -31,26 +31,36 @@ float fbm (in vec2 p){
   return f;
 }
 
+vec2 normal(in vec2 p){
+  const vec2 eps = vec2(1.0, 0.0) * 0.001;
+  return normalize(eps.xx * fbm(p + eps.xx) +
+                   eps.xy * fbm(p + eps.xy) +
+                   eps.yx * fbm(p + eps.yx) +
+                   eps.yy * fbm(p + eps.yy));
+}
+
 void main() {
   vec2 uv = (gl_FragCoord.xy + u_samplePos * 0.25) / 16.0;
-  float noi = fbm(uv);
+  float noi = fbm(uv) * 4.0;
 
   float ran = hash(uv);
-  ran *= pow(ran, 48.0);
-  ran *= ran * (3.0 - 2.0 * ran);
-  ran *= fbm(uv * 0.25);
-
-  vec4 col;
+  vec3 col;
 
   if (noi + uv.y > 6.0){
-    col = vec4(0.1, 0.6, 0.0, 1.0);
+    col = vec3(0.1, 0.7 - ran * 0.3, 0.0);
   } else {
+    ran *= pow(ran, 48.0);
+    ran *= ran * (3.0 - 2.0 * ran);
+    ran *= fbm(uv * 0.25);
+
     col = mix(
-      vec4(0.2, 0.0, 0.3, 1.0),
-      vec4(1.0, 1.0, 0.9, 1.0),
+      vec3(0.2, 0.0, 0.3),
+      vec3(1.0, 1.0, 0.9),
       ran
     );
+
+    col *= max(0.0, dot(normal(uv), vec2(-0.707))) * 0.6 + 0.4;
   }
 
-  gl_FragColor = col;
+  gl_FragColor = vec4(col, 1.0);
 }
